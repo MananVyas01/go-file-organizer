@@ -42,6 +42,7 @@ func main() {
 	dryRun := flag.Bool("dry-run", false, "Preview actions without moving files")
 	versionFlag := flag.Bool("version", false, "Show version information")
 	progress := flag.Bool("progress", false, "Show progress bar during organization")
+	watch := flag.Bool("watch", false, "Watch directory for new files and organize them automatically")
 	help := flag.Bool("help", false, "Show usage")
 
 	// Define flag for multiple mapping overrides
@@ -56,7 +57,7 @@ func main() {
 	}
 
 	if *help || *path == "" {
-		fmt.Println("Usage: go-file-organizer --path <directory> [--dry-run] [--progress] [--map .ext=Category]")
+		fmt.Println("Usage: go-file-organizer --path <directory> [--dry-run] [--progress] [--watch] [--map .ext=Category]")
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
@@ -126,5 +127,16 @@ func main() {
 
 	if logger != nil {
 		fmt.Printf("\n📝 Detailed log written to: organizer.log\n")
+	}
+
+	// Start watch mode if requested
+	if *watch {
+		fmt.Printf("\n👀 Starting watch mode for directory: %s\n", *path)
+		fmt.Println("Press Ctrl+C to stop watching...")
+		
+		if err := organizer.StartWatchMode(*path, *dryRun, logger, extensionMapping, ignoreManager, *progress); err != nil {
+			fmt.Printf("Error starting watch mode: %v\n", err)
+			os.Exit(1)
+		}
 	}
 }

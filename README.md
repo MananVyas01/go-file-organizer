@@ -17,6 +17,7 @@ A powerful CLI tool to automatically organize files in any directory by their fi
 - 🎯 **CLI Overrides**: Quick extension mapping changes via command line
 - 📊 **Summary Reports**: See what was organized at a glance
 - 📈 **Progress Tracking**: Optional progress bar for large operations
+- 👀 **Watch Mode**: Automatically organize new files as they appear in the directory
 
 ## 🚀 Quick Start
 
@@ -77,6 +78,7 @@ Options:
   --dry-run          Preview actions without moving files
   --version          Show version information
   --progress         Show progress bar during organization
+  --watch            Watch directory for new files and organize them automatically
   --map string       Override extension mappings (format: .ext=Category)
   --help             Show usage information
 ```
@@ -109,6 +111,20 @@ go-file-organizer --path ./Downloads --progress
 # Combine with dry-run to see progress of preview
 go-file-organizer --path ./Downloads --dry-run --progress
 ```
+
+#### Watch Mode for Automatic Organization
+```bash
+# Watch a directory and automatically organize new files
+go-file-organizer --path ./Downloads --watch
+
+# Watch mode with dry-run to see what would happen
+go-file-organizer --path ./Downloads --watch --dry-run
+
+# Combine watch mode with progress bar and custom mappings
+go-file-organizer --path ./Downloads --watch --progress --map .py=Scripts
+```
+
+**Note:** In watch mode, press `Ctrl+C` to stop monitoring the directory.
 
 ### Sample Output
 

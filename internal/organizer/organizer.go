@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"go-file-organizer/internal/utils"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
+	"time"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/schollz/progressbar/v3"
 )
 
@@ -113,7 +117,7 @@ func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logge
 				}
 			}
 			summary.FilesMoved++
-			
+
 			// Update progress bar
 			if bar != nil {
 				bar.Add(1)
@@ -202,4 +206,140 @@ func PrintSummary(summary *utils.Summary, isDryRun bool) {
 
 	fmt.Printf("🚫  Skipped (unknown/no extension): %d\n", summary.FilesSkipped)
 	fmt.Println(separator)
+}
+
+// StartWatchMode starts watching the directory for new files and organizes them automatically
+func StartWatchMode(rootPath string, isDryRun bool, logger *utils.Logger, extensionMapping *utils.ExtensionMapping, ignoreManager *utils.IgnoreManager, showProgress bool) error {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return fmt.Errorf("failed to create file watcher: %v", err)
+	}
+	defer watcher.Close()
+
+	// Add the root directory to watch
+	err = watcher.Add(rootPath)
+	if err != nil {
+		return fmt.Errorf("failed to watch directory %s: %v", rootPath, err)
+	}
+
+	// Channel to listen for interrupt signals
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+
+	// Debounce duplicate events (some file operations trigger multiple events)
+	eventDebounce := make(map[string]time.Time)
+	debounceDelay := 500 * time.Millisecond
+
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return nil
+			}
+
+			// Only process file creation and write events
+			if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
+				// Debounce events
+				now := time.Now()
+				if lastTime, exists := eventDebounce[event.Name]; exists && now.Sub(lastTime) < debounceDelay {
+					continue
+				}
+				eventDebounce[event.Name] = now
+
+				// Check if it's a regular file (not a directory)
+				fileInfo, err := os.Stat(event.Name)
+				if err != nil || fileInfo.IsDir() {
+					continue
+				}
+
+				// Check if file should be ignored
+				if ignoreManager != nil && ignoreManager.ShouldIgnore(event.Name) {
+					if logger != nil {
+						logger.LogMove(event.Name, "IGNORED: "+event.Name)
+					}
+					continue
+				}
+
+				// Get file extension and category
+				extension := strings.ToLower(filepath.Ext(event.Name))
+				if extension == "" {
+					if logger != nil {
+						logger.LogMove(event.Name, "SKIPPED: no extension")
+					}
+					continue
+				}
+
+				var category string
+				var exists bool
+				if extensionMapping != nil {
+					category, exists = extensionMapping.GetMapping(extension)
+				} else {
+					category, exists = extensionCategories[extension]
+				}
+
+				if !exists {
+					if logger != nil {
+						logger.LogMove(event.Name, "SKIPPED: unknown extension")
+					}
+					continue
+				}
+
+				// Skip categories that shouldn't be organized
+				if shouldSkipCategory(category) {
+					if logger != nil {
+						logger.LogMove(event.Name, "SKIPPED: "+category)
+					}
+					continue
+				}
+
+				// Organize the file
+				filename := filepath.Base(event.Name)
+				targetDir := filepath.Join(rootPath, category)
+				targetPath := filepath.Join(targetDir, filename)
+
+				if isDryRun {
+					fmt.Printf("🔮 [WATCH] Would move: %s → %s/%s\n", event.Name, category, filename)
+					if logger != nil {
+						logger.LogDryRun(event.Name, targetPath)
+					}
+				} else {
+					// Create target directory if it doesn't exist
+					if err := createCategoryFolder(targetDir, false, logger); err != nil {
+						fmt.Printf("❌ [WATCH] Error creating directory %s: %v\n", targetDir, err)
+						if logger != nil {
+							logger.LogError("Folder creation", targetDir, err)
+						}
+						continue
+					}
+
+					// Move the file
+					if err := moveFile(event.Name, targetPath); err != nil {
+						fmt.Printf("❌ [WATCH] Error moving file %s: %v\n", event.Name, err)
+						if logger != nil {
+							logger.LogError("File move", event.Name, err)
+						}
+						continue
+					}
+
+					fmt.Printf("✅ [WATCH] Moved: %s → %s/%s\n", filename, category, filename)
+					if logger != nil {
+						logger.LogMove(event.Name, targetPath)
+					}
+				}
+			}
+
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return nil
+			}
+			fmt.Printf("⚠️  [WATCH] Watcher error: %v\n", err)
+			if logger != nil {
+				logger.LogError("Watcher", "filesystem", err)
+			}
+
+		case <-interrupt:
+			fmt.Println("\n🛑 Watch mode stopped by user")
+			return nil
+		}
+	}
 }

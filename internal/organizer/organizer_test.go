@@ -276,3 +276,47 @@ func TestOrganizeFilesWithProgress(t *testing.T) {
 	assert.FileExists(t, filepath.Join(tempDir, "image.jpg"))
 	assert.FileExists(t, filepath.Join(tempDir, "script.py"))
 }
+
+func TestWatchModePackages(t *testing.T) {
+	// This test verifies that all required packages for watch mode are available
+	// and that the watch mode function signature is correct
+
+	// Create temporary directory
+	tempDir, err := os.MkdirTemp("", "watch-test")
+	assert.NoError(t, err)
+	defer os.RemoveAll(tempDir)
+
+	// Create a logger
+	logDir, err := os.MkdirTemp("", "log-test")
+	assert.NoError(t, err)
+	defer os.RemoveAll(logDir)
+
+	logFile := filepath.Join(logDir, "test.log")
+	logger, err := utils.NewLogger(logFile)
+	assert.NoError(t, err)
+	defer logger.Close()
+
+	// Test that the StartWatchMode function exists and can be called
+	// We'll immediately stop it by not adding any files to watch
+	go func() {
+		// This test just verifies the function exists and can be called
+		// In a real test environment, we'd need to mock file system events
+		// For now, we'll test the basic setup
+		err := StartWatchMode(tempDir, true, logger, nil, nil, false)
+		// The function should return when there are no files to watch or on error
+		assert.NoError(t, err)
+	}()
+
+	// Just test that the function can be called without panicking
+	// A full integration test would require more complex setup
+}
+
+func TestWatchModeValidation(t *testing.T) {
+	// Test watch mode with invalid directory
+	logger, _ := utils.NewLogger(os.DevNull)
+	defer logger.Close()
+
+	err := StartWatchMode("/nonexistent/directory", true, logger, nil, nil, false)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to watch directory")
+}

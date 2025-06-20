@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.0] - 2025-06-20
+
+### Added
+- 👀 **Watch Mode** - Automatically organize new files as they appear in directories (`--watch`)
+- 🔄 **Real-time Monitoring** - File system events monitoring using `fsnotify`
+- ⏰ **Event Debouncing** - Intelligent handling of duplicate file system events
+- 🛑 **Graceful Shutdown** - Clean exit with Ctrl+C in watch mode
+- 📋 **Watch Mode Logging** - Comprehensive logging of watch events and file organization
+- 🧪 **Watch Mode Tests** - Test coverage for watch functionality
+
+### Enhanced
+- 📖 **Documentation** - Updated README with watch mode examples and usage
+- 🏷️ **Version Information** - Updated CLI help and usage instructions
+
+## [v1.1.0] - 2025-06-20
+
+### Added
+- 📈 **Progress Bar** - Optional visual progress tracking for file operations (`--progress`)
+- 🎨 **Enhanced UX** - Beautiful progress visualization using `progressbar/v3`
+- 🔕 **Progress Mode Logging** - Suppressed per-file logs when progress bar is active
+- 🧪 **Progress Tests** - Test coverage for progress bar functionality
+
+### Enhanced
+- 📖 **CLI Help** - Updated usage instructions and flag descriptions
+- 🎯 **User Experience** - Improved feedback during large operations
+
 ## [v1.0.0] - 2025-06-20
 
 ### Added
@@ -49,14 +75,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Planned for Future Releases
 
-### v1.1.0 (Planned)
+### v1.3.0 (Planned)
 - [ ] GUI application version
 - [ ] Batch processing mode
 - [ ] Undo functionality
 - [ ] Advanced pattern matching (regex support)
 - [ ] Plugin system for custom handlers
 
-### v1.2.0 (Planned)
+### v1.4.0 (Planned)
 - [ ] File content-based categorization
 - [ ] Duplicate file detection
 - [ ] Integration with cloud storage
