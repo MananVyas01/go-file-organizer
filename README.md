@@ -6,8 +6,6 @@
 
 A powerful CLI tool to automatically organize files in any directory by their file types. Keep your folders clean and organized with intelligent file categorization, custom rules, and ignore patterns.
 
-![Demo](https://user-images.githubusercontent.com/placeholder/demo.gif)
-
 ## ✨ Features
 
 - 🗂️ **Smart Organization**: Automatically categorizes files by extension into logical folders
@@ -308,46 +306,6 @@ go-file-organizer/
 └── README.md               # This file
 ```
 
-## Development
-
-### Setup
-
-1. Clone the repository
-2. Run `go mod tidy` to install dependencies
-3. Build with `go build` or run directly with `go run main.go`
-
-### Testing
-
-The project includes comprehensive unit tests for all core functionality:
-
-```bash
-# Run all tests
-go test ./...
-
-# Run tests with verbose output
-go test ./... -v
-
-# Run tests with coverage
-go test ./... -cover
-
-# Run specific test package
-go test ./internal/organizer -v
-go test ./internal/utils -v
-```
-
-### Code Quality
-
-```bash
-# Format code
-go fmt ./...
-
-# Vet code for issues
-go vet ./...
-
-# Run linter (if golangci-lint is installed)
-golangci-lint run
-```
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -366,4 +324,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️By *MananVyas01* for organizing messy folders everywhere!**
+**Made with ❤️ by MananVyas01 for organizing messy folders everywhere!**
