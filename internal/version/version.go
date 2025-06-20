@@ -4,7 +4,7 @@ package version
 import "fmt"
 
 // Version represents the current version of the application
-const Version = "v1.0.0"
+const Version = "v1.1.0"
 
 // AppName is the name of the application
 const AppName = "go-file-organizer"
