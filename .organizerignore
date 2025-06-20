@@ -1,0 +1,42 @@
+# .organizerignore - Files and directories to ignore during organization
+# Similar to .gitignore syntax
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore version control directories
+.git/
+.svn/
+.hg/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.cache
+*.lock
+
+# Ignore log files in root (but not in subdirectories)
+/*.log
+
+# Ignore node_modules if present
+node_modules/
+
+# Ignore build directories
+build/
+dist/
+target/
+
+# Custom ignores - add your patterns here
+# Example: ignore all files in a specific directory
+# private/
+# Example: ignore files with specific names
+# sensitive.txt

@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"go-file-organizer/internal/utils"
 )
 
 // extensionCategories maps file extensions to their categories
@@ -115,6 +116,11 @@ var extensionCategories = map[string]string{
 
 // ScanFiles recursively scans a directory and categorizes files by their extensions
 func ScanFiles(rootPath string) (map[string][]string, error) {
+	return ScanFilesWithConfig(rootPath, nil, nil)
+}
+
+// ScanFilesWithConfig recursively scans a directory with custom configuration and ignore rules
+func ScanFilesWithConfig(rootPath string, extensionMapping *utils.ExtensionMapping, ignoreManager *utils.IgnoreManager) (map[string][]string, error) {
 	// Initialize the result map
 	categories := make(map[string][]string)
 	
@@ -134,6 +140,15 @@ func ScanFiles(rootPath string) (map[string][]string, error) {
 
 		// Skip directories
 		if info.IsDir() {
+			// Check if this directory should be ignored
+			if ignoreManager != nil && ignoreManager.ShouldIgnore(path) {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		// Check if this file should be ignored
+		if ignoreManager != nil && ignoreManager.ShouldIgnore(path) {
 			return nil
 		}
 
@@ -141,7 +156,15 @@ func ScanFiles(rootPath string) (map[string][]string, error) {
 		ext := strings.ToLower(filepath.Ext(info.Name()))
 		
 		// Determine the category
-		category, exists := extensionCategories[ext]
+		var category string
+		var exists bool
+		
+		if extensionMapping != nil {
+			category, exists = extensionMapping.GetMapping(ext)
+		} else {
+			category, exists = extensionCategories[ext]
+		}
+		
 		if !exists {
 			// Handle files with no extension or unknown extensions
 			if ext == "" {
@@ -162,4 +185,13 @@ func ScanFiles(rootPath string) (map[string][]string, error) {
 	}
 
 	return categories, nil
+}
+
+// GetDefaultExtensionCategories returns a copy of the default extension mappings
+func GetDefaultExtensionCategories() map[string]string {
+	result := make(map[string]string)
+	for ext, category := range extensionCategories {
+		result[ext] = category
+	}
+	return result
 }

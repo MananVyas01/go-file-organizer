@@ -1,0 +1,15 @@
+{
+  "customMappings": {
+    ".md": "Documents",
+    ".markdown": "Documents",
+    ".log": "Logs",
+    ".tmp": "Temporary",
+    ".bak": "Backups",
+    ".config": "Config",
+    ".env": "Config",
+    ".dockerfile": "Code",
+    ".makefile": "Code",
+    ".readme": "Documents"
+  },
+  "description": "Custom file extension to category mappings for go-file-organizer"
+}

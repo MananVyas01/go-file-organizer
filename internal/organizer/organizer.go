@@ -10,10 +10,15 @@ import (
 
 // OrganizeFiles organizes files in the given directory by their categories
 func OrganizeFiles(rootPath string, isDryRun bool, logger *utils.Logger) (*utils.Summary, error) {
+	return OrganizeFilesWithConfig(rootPath, isDryRun, logger, nil, nil)
+}
+
+// OrganizeFilesWithConfig organizes files with custom configuration and ignore rules
+func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logger, extensionMapping *utils.ExtensionMapping, ignoreManager *utils.IgnoreManager) (*utils.Summary, error) {
 	summary := &utils.Summary{}
 	
 	// First, scan all files to get categories
-	categories, err := ScanFiles(rootPath)
+	categories, err := ScanFilesWithConfig(rootPath, extensionMapping, ignoreManager)
 	if err != nil {
 		return summary, fmt.Errorf("failed to scan files: %v", err)
 	}
