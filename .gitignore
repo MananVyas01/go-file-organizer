@@ -35,3 +35,4 @@ go.work.sum
 go-file-organizer
 organizer.log
 test_assets/
+assets/
