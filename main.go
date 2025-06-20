@@ -16,6 +16,7 @@ import (
     "flag"
     "fmt"
     "os"
+    "go-file-organizer/internal/organizer"
 )
 
 func main() {
@@ -35,5 +36,23 @@ func main() {
     fmt.Println("Organizing path:", *path)
     fmt.Println("Dry run mode:", *dryRun)
 
-    // TODO: Call organizer package to handle organization
+    // Scan files in the specified directory
+    categories, err := organizer.ScanFiles(*path)
+    if err != nil {
+        fmt.Printf("Error scanning files: %v\n", err)
+        os.Exit(1)
+    }
+
+    // Display the results
+    fmt.Printf("\nFound files in %d categories:\n", len(categories))
+    for category, files := range categories {
+        fmt.Printf("\n%s (%d files):\n", category, len(files))
+        for _, file := range files {
+            if *dryRun {
+                fmt.Printf("  [DRY RUN] %s\n", file)
+            } else {
+                fmt.Printf("  %s\n", file)
+            }
+        }
+    }
 }
