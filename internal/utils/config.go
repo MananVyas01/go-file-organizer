@@ -1,3 +1,4 @@
+// Package utils provides utility functions for configuration, logging, and ignore pattern management.
 package utils
 
 import (

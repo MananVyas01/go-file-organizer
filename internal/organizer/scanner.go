@@ -1,3 +1,5 @@
+// Package organizer provides file organization functionality for the go-file-organizer tool.
+// It handles file scanning, categorization by extension, and file moving operations.
 package organizer
 
 import (
@@ -114,12 +116,19 @@ var extensionCategories = map[string]string{
 	".apk":  "Executables",
 }
 
-// ScanFiles recursively scans a directory and categorizes files by their extensions
+// ScanFiles recursively scans a directory and categorizes files by their extensions.
+// It uses the default extension mappings and does not apply any ignore rules.
+// Returns a map where keys are category names and values are slices of file paths.
 func ScanFiles(rootPath string) (map[string][]string, error) {
 	return ScanFilesWithConfig(rootPath, nil, nil)
 }
 
-// ScanFilesWithConfig recursively scans a directory with custom configuration and ignore rules
+// ScanFilesWithConfig recursively scans a directory with custom configuration and ignore rules.
+// Parameters:
+//   - rootPath: The directory to scan
+//   - extensionMapping: Custom extension-to-category mappings (nil to use defaults)
+//   - ignoreManager: Manager for ignore patterns (nil to ignore no files)
+// Returns a map where keys are category names and values are slices of file paths.
 func ScanFilesWithConfig(rootPath string, extensionMapping *utils.ExtensionMapping, ignoreManager *utils.IgnoreManager) (map[string][]string, error) {
 	// Initialize the result map
 	categories := make(map[string][]string)
@@ -187,7 +196,9 @@ func ScanFilesWithConfig(rootPath string, extensionMapping *utils.ExtensionMappi
 	return categories, nil
 }
 
-// GetDefaultExtensionCategories returns a copy of the default extension mappings
+// GetDefaultExtensionCategories returns a copy of the default extension mappings.
+// This function ensures that modifications to the returned map do not affect
+// the internal default mappings used by the organizer.
 func GetDefaultExtensionCategories() map[string]string {
 	result := make(map[string]string)
 	for ext, category := range extensionCategories {
