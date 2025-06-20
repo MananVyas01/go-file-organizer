@@ -6,15 +6,17 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 // OrganizeFiles organizes files in the given directory by their categories
 func OrganizeFiles(rootPath string, isDryRun bool, logger *utils.Logger) (*utils.Summary, error) {
-	return OrganizeFilesWithConfig(rootPath, isDryRun, logger, nil, nil)
+	return OrganizeFilesWithConfig(rootPath, isDryRun, logger, nil, nil, false)
 }
 
 // OrganizeFilesWithConfig organizes files with custom configuration and ignore rules
-func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logger, extensionMapping *utils.ExtensionMapping, ignoreManager *utils.IgnoreManager) (*utils.Summary, error) {
+func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logger, extensionMapping *utils.ExtensionMapping, ignoreManager *utils.IgnoreManager, showProgress bool) (*utils.Summary, error) {
 	summary := &utils.Summary{}
 
 	// First, scan all files to get categories
@@ -23,9 +25,35 @@ func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logge
 		return summary, fmt.Errorf("failed to scan files: %v", err)
 	}
 
-	// Count total files scanned
+	// Count total files and prepare progress bar
+	totalFiles := 0
 	for _, files := range categories {
-		summary.FilesScanned += len(files)
+		totalFiles += len(files)
+	}
+	summary.FilesScanned = totalFiles
+
+	var bar *progressbar.ProgressBar
+	if showProgress && totalFiles > 0 {
+		bar = progressbar.NewOptions(totalFiles,
+			progressbar.OptionSetDescription("Organizing files"),
+			progressbar.OptionSetWidth(40),
+			progressbar.OptionShowCount(),
+			progressbar.OptionSetRenderBlankState(true),
+			progressbar.OptionEnableColorCodes(true),
+			progressbar.OptionSetTheme(progressbar.Theme{
+				Saucer:        "[green]=[reset]",
+				SaucerHead:    "[green]>[reset]",
+				SaucerPadding: " ",
+				BarStart:      "[",
+				BarEnd:        "]",
+			}),
+		)
+		defer func() {
+			if bar != nil {
+				bar.Finish()
+				fmt.Println() // Add newline after progress bar
+			}
+		}()
 	}
 
 	// Process each category
@@ -33,6 +61,12 @@ func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logge
 		// Skip categories that shouldn't be organized (like "Unknown" or "No Extension")
 		if shouldSkipCategory(category) {
 			summary.FilesSkipped += len(files)
+			// Update progress bar for skipped files
+			if bar != nil {
+				for range files {
+					bar.Add(1)
+				}
+			}
 			continue
 		}
 
@@ -51,22 +85,39 @@ func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logge
 
 			// Skip if file is already in the target directory
 			if filepath.Dir(filePath) == categoryPath {
+				if bar != nil {
+					bar.Add(1)
+				}
 				continue
 			}
 
 			if isDryRun {
 				logger.LogDryRun(filePath, destPath)
-				fmt.Printf("  [DRY-RUN] Would move: %s -> %s\n", filePath, destPath)
+				if !showProgress {
+					fmt.Printf("  [DRY-RUN] Would move: %s -> %s\n", filePath, destPath)
+				}
 			} else {
 				if err := moveFile(filePath, destPath); err != nil {
 					logger.LogError("Move", filePath, err)
-					fmt.Printf("  [ERROR] Failed to move %s: %v\n", filePath, err)
+					if !showProgress {
+						fmt.Printf("  [ERROR] Failed to move %s: %v\n", filePath, err)
+					}
+					if bar != nil {
+						bar.Add(1)
+					}
 					continue
 				}
 				logger.LogMove(filePath, destPath)
-				fmt.Printf("  [MOVED] %s -> %s\n", filePath, destPath)
+				if !showProgress {
+					fmt.Printf("  [MOVED] %s -> %s\n", filePath, destPath)
+				}
 			}
 			summary.FilesMoved++
+			
+			// Update progress bar
+			if bar != nil {
+				bar.Add(1)
+			}
 		}
 	}
 

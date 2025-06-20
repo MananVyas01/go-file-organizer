@@ -41,6 +41,7 @@ func main() {
 	path := flag.String("path", "", "Path to the folder to organize")
 	dryRun := flag.Bool("dry-run", false, "Preview actions without moving files")
 	versionFlag := flag.Bool("version", false, "Show version information")
+	progress := flag.Bool("progress", false, "Show progress bar during organization")
 	help := flag.Bool("help", false, "Show usage")
 
 	// Define flag for multiple mapping overrides
@@ -55,7 +56,7 @@ func main() {
 	}
 
 	if *help || *path == "" {
-		fmt.Println("Usage: go-file-organizer --path <directory> [--dry-run] [--map .ext=Category]")
+		fmt.Println("Usage: go-file-organizer --path <directory> [--dry-run] [--progress] [--map .ext=Category]")
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
@@ -114,7 +115,7 @@ func main() {
 		fmt.Println("\n🚀 ORGANIZING FILES...")
 	}
 
-	summary, err := organizer.OrganizeFilesWithConfig(*path, *dryRun, logger, extensionMapping, ignoreManager)
+	summary, err := organizer.OrganizeFilesWithConfig(*path, *dryRun, logger, extensionMapping, ignoreManager, *progress)
 	if err != nil {
 		fmt.Printf("Error organizing files: %v\n", err)
 		os.Exit(1)

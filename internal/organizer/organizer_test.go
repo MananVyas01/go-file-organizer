@@ -235,3 +235,44 @@ func TestOrganizeFilesDryRun(t *testing.T) {
 	assert.NoDirExists(t, filepath.Join(tempDir, "Images"))
 	assert.NoDirExists(t, filepath.Join(tempDir, "Code"))
 }
+
+func TestOrganizeFilesWithProgress(t *testing.T) {
+	// Create temporary directory for testing
+	tempDir, err := os.MkdirTemp("", "go-file-organizer-test")
+	assert.NoError(t, err)
+	defer os.RemoveAll(tempDir)
+
+	// Create test files
+	testFiles := []string{"document.pdf", "image.jpg", "script.py"}
+	for _, filename := range testFiles {
+		filePath := filepath.Join(tempDir, filename)
+		file, err := os.Create(filePath)
+		assert.NoError(t, err)
+		file.Close()
+	}
+
+	// Create logger
+	logDir, err := os.MkdirTemp("", "log-test")
+	assert.NoError(t, err)
+	defer os.RemoveAll(logDir)
+
+	logFile := filepath.Join(logDir, "test.log")
+	logger, err := utils.NewLogger(logFile)
+	assert.NoError(t, err)
+	defer logger.Close()
+
+	// Test with progress bar enabled (dry-run)
+	summary, err := OrganizeFilesWithConfig(tempDir, true, logger, nil, nil, true)
+	assert.NoError(t, err)
+
+	// Verify summary
+	assert.Equal(t, 3, summary.FilesScanned)
+	assert.Equal(t, 3, summary.FilesMoved) // In dry-run, this counts "would be moved"
+	assert.Equal(t, 3, summary.FoldersCreated)
+	assert.Equal(t, 0, summary.FilesSkipped)
+
+	// Files should still exist (dry-run)
+	assert.FileExists(t, filepath.Join(tempDir, "document.pdf"))
+	assert.FileExists(t, filepath.Join(tempDir, "image.jpg"))
+	assert.FileExists(t, filepath.Join(tempDir, "script.py"))
+}

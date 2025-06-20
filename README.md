@@ -16,6 +16,7 @@ A powerful CLI tool to automatically organize files in any directory by their fi
 - 🌍 **Cross-Platform**: Available for Windows, macOS, and Linux
 - 🎯 **CLI Overrides**: Quick extension mapping changes via command line
 - 📊 **Summary Reports**: See what was organized at a glance
+- 📈 **Progress Tracking**: Optional progress bar for large operations
 
 ## 🚀 Quick Start
 
@@ -75,6 +76,7 @@ Options:
   --path string       Path to the folder to organize (required)
   --dry-run          Preview actions without moving files
   --version          Show version information
+  --progress         Show progress bar during organization
   --map string       Override extension mappings (format: .ext=Category)
   --help             Show usage information
 ```
@@ -99,8 +101,18 @@ go-file-organizer --path ./Downloads --map .py=Scripts --map .txt=Notes
 go-file-organizer --path ./Downloads --map .py=Scripts,.txt=Notes,.log=Logs
 ```
 
+#### Progress Bar for Large Operations
+```bash
+# Show progress bar while organizing many files
+go-file-organizer --path ./Downloads --progress
+
+# Combine with dry-run to see progress of preview
+go-file-organizer --path ./Downloads --dry-run --progress
+```
+
 ### Sample Output
 
+**Standard Mode:**
 ```
 🚀 ORGANIZING FILES...
 
@@ -111,6 +123,20 @@ go-file-organizer --path ./Downloads --map .py=Scripts,.txt=Notes,.log=Logs
 ✅ Moved: report.pdf → Documents/report.pdf
 ✅ Moved: photo.jpg → Images/photo.jpg
 ✅ Moved: script.py → Code/script.py
+
+📊 ORGANIZATION COMPLETE
+Files processed: 15
+Files moved: 12
+Files skipped: 3
+Directories created: 4
+
+📝 Detailed log written to: organizer.log
+```
+
+**With Progress Bar (`--progress`):**
+```
+🚀 ORGANIZING FILES...
+Organizing files  80% [===============================>        ] (12/15)
 
 📊 ORGANIZATION COMPLETE
 Files processed: 15
