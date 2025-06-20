@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"go-file-organizer/internal/organizer"
 	"go-file-organizer/internal/utils"
+	"go-file-organizer/internal/version"
 	"os"
 )
 
@@ -39,6 +40,7 @@ func main() {
 	// Define flags
 	path := flag.String("path", "", "Path to the folder to organize")
 	dryRun := flag.Bool("dry-run", false, "Preview actions without moving files")
+	versionFlag := flag.Bool("version", false, "Show version information")
 	help := flag.Bool("help", false, "Show usage")
 
 	// Define flag for multiple mapping overrides
@@ -46,6 +48,11 @@ func main() {
 	flag.Var(&mapOverrides, "map", "Override extension mappings (format: .ext=Category, can be used multiple times)")
 
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Println(version.GetVersionInfo())
+		os.Exit(0)
+	}
 
 	if *help || *path == "" {
 		fmt.Println("Usage: go-file-organizer --path <directory> [--dry-run] [--map .ext=Category]")

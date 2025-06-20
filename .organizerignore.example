@@ -1,0 +1,89 @@
+# .organizerignore - Example ignore patterns for go-file-organizer
+# Lines starting with # are comments
+
+# System files
+.DS_Store
+desktop.ini
+thumbs.db
+.git/
+.svn/
+.hg/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+*.swo
+*~
+
+# Build artifacts
+build/
+dist/
+target/
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Package managers
+node_modules/
+vendor/
+.npm/
+.yarn/
+pip-cache/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vim/
+.emacs.d/
+
+# Configuration that shouldn't be moved
+.env
+.env.local
+.env.production
+config.ini
+settings.conf
+
+# Version control
+.gitignore
+.gitmodules
+.gitattributes
+
+# Documentation that should stay in root
+README.md
+LICENSE
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Project files that should stay in root
+Makefile
+makefile
+CMakeLists.txt
+package.json
+composer.json
+Cargo.toml
+go.mod
+requirements.txt
+pom.xml
+build.gradle
+
+# Files at root level only (use leading slash)
+/important.txt
+/config.json
+/.organizerignore
+
+# Directories to never organize
+/projects/
+/workspace/
+/development/

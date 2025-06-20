@@ -1,34 +1,131 @@
 # Go File Organizer
 
-A CLI tool to organize files in a directory by their file types.
+[![Go Report Card](https://goreportcard.com/badge/github.com/userna/MananVyas01/go-file-organizer)](https://goreportcard.com/report/github.com/MananVyas01/go-file-organizer)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Release](https://img.shields.io/github/release/userna/MananVyas01/go-file-organizer.svg)](https://github.com/userna/MananVyas01/go-file-organizer/releases)
 
-## Features
+A powerful CLI tool to automatically organize files in any directory by their file types. Keep your folders clean and organized with intelligent file categorization, custom rules, and ignore patterns.
 
-- Organize files by file type into separate directories
-- Dry-run mode to preview changes before applying them
-- Configurable file extension mappings via `config/config.json`
-- Ignore patterns support via `.organizerignore` file
-- Comprehensive logging of operations
-- Command-line interface with intuitive flags
-- Extensive unit test coverage
+![Demo](https://user-images.githubusercontent.com/placeholder/demo.gif)
 
-## Usage
+## ✨ Features
 
+- 🗂️ **Smart Organization**: Automatically categorizes files by extension into logical folders
+- 🔍 **Dry-Run Mode**: Preview changes before applying them
+- ⚙️ **Configurable**: Custom file extension mappings via JSON config
+- 🚫 **Ignore Patterns**: Skip files and directories using `.organizerignore`
+- 📝 **Detailed Logging**: Complete operation logs with summary reports
+- 🌍 **Cross-Platform**: Available for Windows, macOS, and Linux
+- 🎯 **CLI Overrides**: Quick extension mapping changes via command line
+- 📊 **Summary Reports**: See what was organized at a glance
+
+## 🚀 Quick Start
+
+### Installation
+
+#### Download Pre-built Binaries
+
+1. Go to the [Releases page](https://github.com/username/go-file-organizer/releases)
+2. Download the binary for your platform:
+   - `go-file-organizer_linux_amd64.tar.gz` - Linux (x64)
+   - `go-file-organizer_darwin_amd64.tar.gz` - macOS (Intel)
+   - `go-file-organizer_darwin_arm64.tar.gz` - macOS (Apple Silicon)
+   - `go-file-organizer_windows_amd64.zip` - Windows (x64)
+
+3. Extract and move to your PATH:
+
+**Linux/macOS:**
 ```bash
-go run main.go --path <directory> [--dry-run]
+tar -xzf go-file-organizer_*.tar.gz
+sudo mv go-file-organizer /usr/local/bin/
 ```
 
-### Flags
+**Windows:**
+```powershell
+# Extract the .exe and add to your PATH or run directly
+```
 
-- `--path`: Path to the folder to organize (required)
-- `--dry-run`: Preview actions without moving files (optional)
-- `--config`: Path to custom config file (optional)
-- `--mapping`: Override file extension mappings (e.g., "txt:Documents,py:Code")
-- `--help`: Show usage information
+#### Build from Source
 
-## Configuration
+```bash
+git clone https://github.com/MananVyas01/go-file-organizer.git
+cd go-file-organizer
+go build -o go-file-organizer .
+```
 
-### Extension Mapping
+### Basic Usage
+
+```bash
+# Organize files in current directory (dry-run first!)
+go-file-organizer --path . --dry-run
+
+# Actually organize files
+go-file-organizer --path .
+
+# Organize a specific folder
+go-file-organizer --path /path/to/messy/folder
+```
+
+## 📖 Usage
+
+### Command Line Options
+
+```bash
+go-file-organizer [OPTIONS]
+
+Options:
+  --path string       Path to the folder to organize (required)
+  --dry-run          Preview actions without moving files
+  --version          Show version information
+  --map string       Override extension mappings (format: .ext=Category)
+  --help             Show usage information
+```
+
+### Examples
+
+#### Basic Organization
+```bash
+# Always start with a dry-run to see what will happen
+go-file-organizer --path ./Downloads --dry-run
+
+# If you're happy with the preview, run it for real
+go-file-organizer --path ./Downloads
+```
+
+#### Custom Extension Mappings
+```bash
+# Override specific extensions
+go-file-organizer --path ./Downloads --map .py=Scripts --map .txt=Notes
+
+# Multiple mappings in one command
+go-file-organizer --path ./Downloads --map .py=Scripts,.txt=Notes,.log=Logs
+```
+
+### Sample Output
+
+```
+🚀 ORGANIZING FILES...
+
+📁 Created: Documents/
+📁 Created: Images/
+📁 Created: Code/
+
+✅ Moved: report.pdf → Documents/report.pdf
+✅ Moved: photo.jpg → Images/photo.jpg
+✅ Moved: script.py → Code/script.py
+
+📊 ORGANIZATION COMPLETE
+Files processed: 15
+Files moved: 12
+Files skipped: 3
+Directories created: 4
+
+📝 Detailed log written to: organizer.log
+```
+
+## ⚙️ Configuration
+
+### Custom Extension Mappings
 
 Create a `config/config.json` file to customize how file extensions are categorized:
 
@@ -36,51 +133,151 @@ Create a `config/config.json` file to customize how file extensions are categori
 {
   "extensions": {
     "py": "Code",
+    "js": "Code", 
+    "html": "Code",
+    "css": "Code",
     "txt": "Documents",
-    "jpg": "Images"
+    "pdf": "Documents",
+    "md": "Documents",
+    "jpg": "Images",
+    "png": "Images",
+    "gif": "Images",
+    "mp4": "Videos",
+    "mp3": "Audio",
+    "zip": "Archives"
   }
 }
 ```
 
+You can also use the example configuration file:
+```bash
+cp config/example.config.json config/config.json
+# Edit config/config.json to your preferences
+```
+
+### File Categories
+
+Default categories include:
+- **Documents**: PDF, DOC, TXT, MD, etc.
+- **Images**: JPG, PNG, GIF, SVG, etc. 
+- **Videos**: MP4, AVI, MKV, MOV, etc.
+- **Audio**: MP3, WAV, FLAC, etc.
+- **Code**: JS, PY, GO, HTML, CSS, etc.
+- **Archives**: ZIP, RAR, 7Z, TAR, etc.
+- **Unknown**: Files with unrecognized extensions
+
 ### Ignore Patterns
 
-Create a `.organizerignore` file to specify files and patterns to skip:
+Create a `.organizerignore` file to specify files and patterns to skip during organization:
 
+```bash
+# Copy the example ignore file
+cp .organizerignore.example .organizerignore
+# Edit .organizerignore to your needs
 ```
-# Ignore specific files
+
+**Example `.organizerignore`:**
+```
+# System files
 .DS_Store
 desktop.ini
 
-# Ignore file patterns
+# Temporary files  
 *.tmp
 *.log
 
-# Ignore directories
-build/
-node_modules/
+# Important files that should stay in place
+README.md
+LICENSE
+Makefile
 
-# Ignore files at root level only
-/important.txt
+# Directories to skip
+.git/
+node_modules/
+build/
+
+# Files at root level only (leading slash)
+/important-config.json
 ```
 
-## Examples
+**Pattern Types:**
+- `filename.ext` - Exact filename match
+- `*.ext` - Wildcard for any filename with extension
+- `directory/` - Skip entire directories 
+- `/file.ext` - Files only at root level
+
+## 🛠️ Development & Contributing
+
+### Building from Source
 
 ```bash
-# Organize files in the current directory
-go run main.go --path .
+# Clone the repository
+git clone https://github.com/username/go-file-organizer.git
+cd go-file-organizer
 
-# Preview what would be organized without making changes
-go run main.go --path ./downloads --dry-run
+# Install dependencies
+go mod tidy
 
-# Use custom config file
-go run main.go --path ./downloads --config ./custom-config.json
+# Build for current platform
+make build
 
-# Override extension mappings via command line
-go run main.go --path ./downloads --mapping "py:Scripts,txt:Notes"
+# Build for all platforms
+make build-all
 
-# Show help
-go run main.go --help
+# Run tests
+make test
+
+# Format and vet code
+make check
 ```
+
+### Cross-Platform Builds
+
+Use the included Makefile for easy cross-platform compilation:
+
+```bash
+# Build for all supported platforms
+make build-all
+
+# Create release packages
+make package
+```
+
+This creates binaries for:
+- Linux (amd64, arm64)
+- Windows (amd64, arm64)  
+- macOS (amd64, arm64)
+
+### Testing
+
+```bash
+# Run all tests
+go test ./...
+
+# Run tests with verbose output
+go test ./... -v
+
+# Run tests with coverage
+go test ./... -cover
+
+# Run specific test package
+go test ./internal/organizer -v
+go test ./internal/utils -v
+```
+
+### Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure your code follows the project standards:
+- Run `go fmt ./...` before committing
+- Run `go vet ./...` to check for issues
+- Add tests for new functionality
+- Update documentation as needed
 
 ## Project Structure
 
@@ -150,3 +347,23 @@ go vet ./...
 # Run linter (if golangci-lint is installed)
 golangci-lint run
 ```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Go](https://golang.org/)
+- Uses [testify](https://github.com/stretchr/testify) for testing
+- Inspired by file organization tools and the need for a cross-platform solution
+
+## 📧 Support
+
+- 🐛 [Report Issues](https://github.com/username/go-file-organizer/issues)
+- 💡 [Request Features](https://github.com/username/go-file-organizer/issues)
+- 📖 [Documentation](https://github.com/username/go-file-organizer/wiki)
+
+---
+
+**Made with ❤️By *MananVyas01* for organizing messy folders everywhere!**
