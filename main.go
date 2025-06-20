@@ -17,6 +17,7 @@ import (
     "fmt"
     "os"
     "go-file-organizer/internal/organizer"
+    "go-file-organizer/internal/utils"
 )
 
 func main() {
@@ -36,23 +37,35 @@ func main() {
     fmt.Println("Organizing path:", *path)
     fmt.Println("Dry run mode:", *dryRun)
 
-    // Scan files in the specified directory
-    categories, err := organizer.ScanFiles(*path)
+    // Initialize logger
+    logger, err := utils.NewLogger("organizer.log")
     if err != nil {
-        fmt.Printf("Error scanning files: %v\n", err)
+        fmt.Printf("Warning: Could not create log file: %v\n", err)
+        fmt.Println("Continuing without logging...")
+    }
+    defer func() {
+        if logger != nil {
+            logger.Close()
+        }
+    }()
+
+    // Organize files
+    if *dryRun {
+        fmt.Println("\n🔮 DRY-RUN MODE: Simulating file organization...")
+    } else {
+        fmt.Println("\n🚀 ORGANIZING FILES...")
+    }
+
+    summary, err := organizer.OrganizeFiles(*path, *dryRun, logger)
+    if err != nil {
+        fmt.Printf("Error organizing files: %v\n", err)
         os.Exit(1)
     }
 
-    // Display the results
-    fmt.Printf("\nFound files in %d categories:\n", len(categories))
-    for category, files := range categories {
-        fmt.Printf("\n%s (%d files):\n", category, len(files))
-        for _, file := range files {
-            if *dryRun {
-                fmt.Printf("  [DRY RUN] %s\n", file)
-            } else {
-                fmt.Printf("  %s\n", file)
-            }
-        }
+    // Print summary
+    organizer.PrintSummary(summary, *dryRun)
+
+    if logger != nil {
+        fmt.Printf("\n📝 Detailed log written to: organizer.log\n")
     }
 }
