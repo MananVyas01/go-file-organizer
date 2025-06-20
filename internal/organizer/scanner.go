@@ -4,10 +4,10 @@ package organizer
 
 import (
 	"fmt"
+	"go-file-organizer/internal/utils"
 	"os"
 	"path/filepath"
 	"strings"
-	"go-file-organizer/internal/utils"
 )
 
 // extensionCategories maps file extensions to their categories
@@ -24,19 +24,19 @@ var extensionCategories = map[string]string{
 	".ico":  "Images",
 
 	// Documents
-	".pdf":  "Documents",
-	".doc":  "Documents",
-	".docx": "Documents",
-	".txt":  "Documents",
-	".rtf":  "Documents",
-	".odt":  "Documents",
+	".pdf":   "Documents",
+	".doc":   "Documents",
+	".docx":  "Documents",
+	".txt":   "Documents",
+	".rtf":   "Documents",
+	".odt":   "Documents",
 	".pages": "Documents",
 
 	// Spreadsheets
-	".xls":  "Spreadsheets",
-	".xlsx": "Spreadsheets",
-	".csv":  "Spreadsheets",
-	".ods":  "Spreadsheets",
+	".xls":     "Spreadsheets",
+	".xlsx":    "Spreadsheets",
+	".csv":     "Spreadsheets",
+	".ods":     "Spreadsheets",
 	".numbers": "Spreadsheets",
 
 	// Presentations
@@ -46,45 +46,45 @@ var extensionCategories = map[string]string{
 	".key":  "Presentations",
 
 	// Code
-	".go":   "Code",
-	".js":   "Code",
-	".ts":   "Code",
-	".py":   "Code",
-	".java": "Code",
-	".c":    "Code",
-	".cpp":  "Code",
-	".h":    "Code",
-	".hpp":  "Code",
-	".cs":   "Code",
-	".php":  "Code",
-	".rb":   "Code",
-	".rs":   "Code",
+	".go":    "Code",
+	".js":    "Code",
+	".ts":    "Code",
+	".py":    "Code",
+	".java":  "Code",
+	".c":     "Code",
+	".cpp":   "Code",
+	".h":     "Code",
+	".hpp":   "Code",
+	".cs":    "Code",
+	".php":   "Code",
+	".rb":    "Code",
+	".rs":    "Code",
 	".swift": "Code",
-	".kt":   "Code",
+	".kt":    "Code",
 	".scala": "Code",
-	".html": "Code",
-	".css":  "Code",
-	".scss": "Code",
-	".sass": "Code",
-	".less": "Code",
-	".xml":  "Code",
-	".json": "Code",
-	".yaml": "Code",
-	".yml":  "Code",
-	".toml": "Code",
-	".ini":  "Code",
-	".cfg":  "Code",
-	".conf": "Code",
+	".html":  "Code",
+	".css":   "Code",
+	".scss":  "Code",
+	".sass":  "Code",
+	".less":  "Code",
+	".xml":   "Code",
+	".json":  "Code",
+	".yaml":  "Code",
+	".yml":   "Code",
+	".toml":  "Code",
+	".ini":   "Code",
+	".cfg":   "Code",
+	".conf":  "Code",
 
 	// Archives
-	".zip":  "Archives",
-	".rar":  "Archives",
-	".7z":   "Archives",
-	".tar":  "Archives",
-	".gz":   "Archives",
-	".bz2":  "Archives",
-	".xz":   "Archives",
-	".iso":  "Archives",
+	".zip": "Archives",
+	".rar": "Archives",
+	".7z":  "Archives",
+	".tar": "Archives",
+	".gz":  "Archives",
+	".bz2": "Archives",
+	".xz":  "Archives",
+	".iso": "Archives",
 
 	// Audio
 	".mp3":  "Audio",
@@ -107,13 +107,13 @@ var extensionCategories = map[string]string{
 	".3gp":  "Video",
 
 	// Executables
-	".exe":  "Executables",
-	".msi":  "Executables",
-	".deb":  "Executables",
-	".rpm":  "Executables",
-	".dmg":  "Executables",
-	".app":  "Executables",
-	".apk":  "Executables",
+	".exe": "Executables",
+	".msi": "Executables",
+	".deb": "Executables",
+	".rpm": "Executables",
+	".dmg": "Executables",
+	".app": "Executables",
+	".apk": "Executables",
 }
 
 // ScanFiles recursively scans a directory and categorizes files by their extensions.
@@ -128,11 +128,12 @@ func ScanFiles(rootPath string) (map[string][]string, error) {
 //   - rootPath: The directory to scan
 //   - extensionMapping: Custom extension-to-category mappings (nil to use defaults)
 //   - ignoreManager: Manager for ignore patterns (nil to ignore no files)
+//
 // Returns a map where keys are category names and values are slices of file paths.
 func ScanFilesWithConfig(rootPath string, extensionMapping *utils.ExtensionMapping, ignoreManager *utils.IgnoreManager) (map[string][]string, error) {
 	// Initialize the result map
 	categories := make(map[string][]string)
-	
+
 	// Check if the root path exists and is accessible
 	if _, err := os.Stat(rootPath); os.IsNotExist(err) {
 		return nil, fmt.Errorf("directory does not exist: %s", rootPath)
@@ -163,17 +164,17 @@ func ScanFilesWithConfig(rootPath string, extensionMapping *utils.ExtensionMappi
 
 		// Get the file extension (case-insensitive)
 		ext := strings.ToLower(filepath.Ext(info.Name()))
-		
+
 		// Determine the category
 		var category string
 		var exists bool
-		
+
 		if extensionMapping != nil {
 			category, exists = extensionMapping.GetMapping(ext)
 		} else {
 			category, exists = extensionCategories[ext]
 		}
-		
+
 		if !exists {
 			// Handle files with no extension or unknown extensions
 			if ext == "" {
@@ -185,7 +186,7 @@ func ScanFilesWithConfig(rootPath string, extensionMapping *utils.ExtensionMappi
 
 		// Add the file path to the appropriate category
 		categories[category] = append(categories[category], path)
-		
+
 		return nil
 	})
 

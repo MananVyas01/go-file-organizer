@@ -26,13 +26,13 @@ func NewExtensionMapping(defaultMappings map[string]string) *ExtensionMapping {
 		mappings: make(map[string]string),
 		sources:  make(map[string]string),
 	}
-	
+
 	// Add default mappings
 	for ext, category := range defaultMappings {
 		mapping.mappings[ext] = category
 		mapping.sources[ext] = "default"
 	}
-	
+
 	return mapping
 }
 
@@ -43,19 +43,19 @@ func (em *ExtensionMapping) LoadConfig(configPath string) error {
 		// Config file doesn't exist, that's okay
 		return nil
 	}
-	
+
 	// Read config file
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return fmt.Errorf("failed to read config file: %v", err)
 	}
-	
+
 	// Parse JSON
 	var config Config
 	if err := json.Unmarshal(data, &config); err != nil {
 		return fmt.Errorf("failed to parse config JSON: %v", err)
 	}
-	
+
 	// Validate and merge custom mappings
 	count := 0
 	for ext, category := range config.CustomMappings {
@@ -63,17 +63,17 @@ func (em *ExtensionMapping) LoadConfig(configPath string) error {
 			fmt.Printf("Warning: Invalid extension '%s' in config: %v\n", ext, err)
 			continue
 		}
-		
+
 		if err := em.validateCategory(category); err != nil {
 			fmt.Printf("Warning: Invalid category '%s' for extension '%s': %v\n", category, ext, err)
 			continue
 		}
-		
+
 		em.mappings[strings.ToLower(ext)] = category
 		em.sources[strings.ToLower(ext)] = "config"
 		count++
 	}
-	
+
 	fmt.Printf("Loaded %d custom mappings from config file\n", count)
 	return nil
 }
@@ -86,23 +86,23 @@ func (em *ExtensionMapping) ApplyCLIMappings(cliMappings []string) error {
 		if len(parts) != 2 {
 			return fmt.Errorf("invalid mapping format '%s', expected '.ext=Category'", mapping)
 		}
-		
+
 		ext := strings.TrimSpace(parts[0])
 		category := strings.TrimSpace(parts[1])
-		
+
 		if err := em.validateExtension(ext); err != nil {
 			return fmt.Errorf("invalid extension '%s': %v", ext, err)
 		}
-		
+
 		if err := em.validateCategory(category); err != nil {
 			return fmt.Errorf("invalid category '%s': %v", category, err)
 		}
-		
+
 		em.mappings[strings.ToLower(ext)] = category
 		em.sources[strings.ToLower(ext)] = "cli"
 		count++
 	}
-	
+
 	if count > 0 {
 		fmt.Printf("Applied %d CLI mapping overrides\n", count)
 	}
@@ -128,7 +128,7 @@ func (em *ExtensionMapping) GetMappings() map[string]string {
 func (em *ExtensionMapping) PrintSummary() {
 	configCount := 0
 	cliCount := 0
-	
+
 	for _, source := range em.sources {
 		switch source {
 		case "config":
@@ -137,7 +137,7 @@ func (em *ExtensionMapping) PrintSummary() {
 			cliCount++
 		}
 	}
-	
+
 	if configCount > 0 || cliCount > 0 {
 		fmt.Printf("\n📋 Custom Rules Applied:\n")
 		if configCount > 0 {
@@ -154,15 +154,15 @@ func (em *ExtensionMapping) validateExtension(ext string) error {
 	if ext == "" {
 		return fmt.Errorf("extension cannot be empty")
 	}
-	
+
 	if !strings.HasPrefix(ext, ".") {
 		return fmt.Errorf("extension must start with '.'")
 	}
-	
+
 	if len(ext) == 1 {
 		return fmt.Errorf("extension must have content after '.'")
 	}
-	
+
 	return nil
 }
 
@@ -171,11 +171,11 @@ func (em *ExtensionMapping) validateCategory(category string) error {
 	if category == "" {
 		return fmt.Errorf("category cannot be empty")
 	}
-	
+
 	if strings.TrimSpace(category) != category {
 		return fmt.Errorf("category cannot have leading or trailing whitespace")
 	}
-	
+
 	// Check for invalid characters that might cause filesystem issues
 	invalidChars := []string{"/", "\\", ":", "*", "?", "\"", "<", ">", "|"}
 	for _, char := range invalidChars {
@@ -183,6 +183,6 @@ func (em *ExtensionMapping) validateCategory(category string) error {
 			return fmt.Errorf("category contains invalid character '%s'", char)
 		}
 	}
-	
+
 	return nil
 }

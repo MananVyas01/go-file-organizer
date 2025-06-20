@@ -2,10 +2,10 @@ package organizer
 
 import (
 	"fmt"
+	"go-file-organizer/internal/utils"
 	"os"
 	"path/filepath"
 	"strings"
-	"go-file-organizer/internal/utils"
 )
 
 // OrganizeFiles organizes files in the given directory by their categories
@@ -16,7 +16,7 @@ func OrganizeFiles(rootPath string, isDryRun bool, logger *utils.Logger) (*utils
 // OrganizeFilesWithConfig organizes files with custom configuration and ignore rules
 func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logger, extensionMapping *utils.ExtensionMapping, ignoreManager *utils.IgnoreManager) (*utils.Summary, error) {
 	summary := &utils.Summary{}
-	
+
 	// First, scan all files to get categories
 	categories, err := ScanFilesWithConfig(rootPath, extensionMapping, ignoreManager)
 	if err != nil {
@@ -48,7 +48,7 @@ func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logge
 		for _, filePath := range files {
 			fileName := filepath.Base(filePath)
 			destPath := filepath.Join(categoryPath, fileName)
-			
+
 			// Skip if file is already in the target directory
 			if filepath.Dir(filePath) == categoryPath {
 				continue
@@ -72,7 +72,7 @@ func OrganizeFilesWithConfig(rootPath string, isDryRun bool, logger *utils.Logge
 
 	// Log summary
 	logger.LogSummary(*summary)
-	
+
 	return summary, nil
 }
 
@@ -130,7 +130,7 @@ func moveFile(source, destination string) error {
 // PrintSummary prints a clean summary of the organization process
 func PrintSummary(summary *utils.Summary, isDryRun bool) {
 	separator := strings.Repeat("=", 50)
-	
+
 	fmt.Println("\n" + separator)
 	if isDryRun {
 		fmt.Println("📋 DRY-RUN SUMMARY")
@@ -138,9 +138,9 @@ func PrintSummary(summary *utils.Summary, isDryRun bool) {
 		fmt.Println("📋 ORGANIZATION SUMMARY")
 	}
 	fmt.Println(separator)
-	
+
 	fmt.Printf("✅  Total files scanned: %d\n", summary.FilesScanned)
-	
+
 	if isDryRun {
 		fmt.Printf("🔮  Files that would be moved: %d\n", summary.FilesMoved)
 		fmt.Printf("📁  Folders that would be created: %d\n", summary.FoldersCreated)
@@ -148,7 +148,7 @@ func PrintSummary(summary *utils.Summary, isDryRun bool) {
 		fmt.Printf("🔀  Files moved: %d\n", summary.FilesMoved)
 		fmt.Printf("📁  Folders created: %d\n", summary.FoldersCreated)
 	}
-	
+
 	fmt.Printf("🚫  Skipped (unknown/no extension): %d\n", summary.FilesSkipped)
 	fmt.Println(separator)
 }

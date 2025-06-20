@@ -20,10 +20,10 @@ func NewLogger(logPath string) (*Logger, error) {
 	}
 
 	logger := log.New(file, "", log.LstdFlags)
-	
+
 	// Write session separator
 	logger.Println("=== New Organizer Session Started ===")
-	
+
 	return &Logger{
 		file:   file,
 		logger: logger,
