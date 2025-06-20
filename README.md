@@ -108,7 +108,7 @@ go-file-organizer --path ./Downloads --map .py=Scripts,.txt=Notes,.log=Logs
 # Show progress bar while organizing many files
 go-file-organizer --path ./Downloads --progress
 
-# Combine with dry-run to see progress of preview
+# Combine with dry-run to see progress of
 go-file-organizer --path ./Downloads --dry-run --progress
 ```
 
@@ -348,7 +348,36 @@ go-file-organizer/
 └── README.md               # This file
 ```
 
-## 📄 License
+## � Future Roadmap
+
+We're continuously improving go-file-organizer! Here's what's planned for upcoming releases:
+
+### 🌐 v1.3.0 - Web UI (Planned)
+- **Visual Interface**: Beautiful web-based GUI for file organization
+- **Drag & Drop**: Intuitive file management with drag-and-drop support
+- **Real-time Preview**: Live preview of organization changes before applying
+- **Configuration Management**: Visual config editor for extension mappings
+
+### 🗑️ v1.4.0 - Smart Safety Features (Planned)
+- **Trash Mode**: Move files to trash/recycle bin instead of permanent moves
+- **Undo Operations**: Rollback file organization changes
+- **Backup Creation**: Automatic backups before major operations
+- **Conflict Resolution**: Smart handling of duplicate file names
+
+### ☁️ v1.5.0 - Cloud Integration (not Planned yet)
+- **Cloud Storage**: Support for Google Drive, Dropbox, OneDrive
+- **Sync Across Devices**: Keep organization rules synchronized
+- **Remote Organization**: Organize cloud folders directly
+
+### 🔧 Advanced Features (Future)
+- **Custom Scripts**: Run custom scripts on organized files
+- **File Content Analysis**: Organization based on file content
+- **API Server**: REST API for integration with other tools
+- **Mobile Apps**: iOS and Android companion apps
+
+> **Want to contribute?** Join our [GitHub Discussions](https://github.com/MananVyas01/go-file-organizer/discussions) or [Request Features](https://github.com/MananVyas01/go-file-organizer/issues)
+
+## �📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
