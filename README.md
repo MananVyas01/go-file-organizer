@@ -1,8 +1,8 @@
 # Go File Organizer
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/userna/MananVyas01/go-file-organizer)](https://goreportcard.com/report/github.com/MananVyas01/go-file-organizer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/MananVyas01/go-file-organizer)](https://goreportcard.com/report/github.com/MananVyas01/go-file-organizer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Release](https://img.shields.io/github/release/userna/MananVyas01/go-file-organizer.svg)](https://github.com/userna/MananVyas01/go-file-organizer/releases)
+[![Release](https://img.shields.io/github/release/MananVyas01/go-file-organizer.svg)](https://github.com/MananVyas01/go-file-organizer/releases)
 
 A powerful CLI tool to automatically organize files in any directory by their file types. Keep your folders clean and organized with intelligent file categorization, custom rules, and ignore patterns.
 
@@ -25,7 +25,7 @@ A powerful CLI tool to automatically organize files in any directory by their fi
 
 #### Download Pre-built Binaries
 
-1. Go to the [Releases page](https://github.com/username/go-file-organizer/releases)
+1. Go to the [Releases page](https://github.com/MananVyas01/go-file-organizer/releases)
 2. Download the binary for your platform:
    - `go-file-organizer_linux_amd64.tar.gz` - Linux (x64)
    - `go-file-organizer_darwin_amd64.tar.gz` - macOS (Intel)
@@ -212,7 +212,7 @@ build/
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/go-file-organizer.git
+git clone https://github.com/MananVyas01/go-file-organizer.git
 cd go-file-organizer
 
 # Install dependencies
@@ -360,9 +360,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Support
 
-- 🐛 [Report Issues](https://github.com/username/go-file-organizer/issues)
-- 💡 [Request Features](https://github.com/username/go-file-organizer/issues)
-- 📖 [Documentation](https://github.com/username/go-file-organizer/wiki)
+- 🐛 [Report Issues](https://github.com/MananVyas01/go-file-organizer/issues)
+- 💡 [Request Features](https://github.com/MananVyas01/go-file-organizer/issues)
+- 📖 [Documentation](https://github.com/MananVyas01/go-file-organizer/wiki)
 
 ---
 
